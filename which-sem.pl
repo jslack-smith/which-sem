@@ -9,10 +9,10 @@ use strict;
 use Data::Dumper;
 use Text::Table;
 
-my $debug = 0;
+my $debug = 1;
 
 my %courses;
-my @semesters = ("T1", "T2", "U2");
+my @semesters = ("T1", "T2", "U1");
 
 # read course codes into courses hash
 while(my $code = <>) {
@@ -39,11 +39,6 @@ while(my $code = <>) {
         print "Illegal course code: $code \n";
     }
 }
-
-if($debug) {
-    print Dumper(\%courses);
-}
-
 
 # update courses hash with when the courses are running
 foreach my $course (keys %courses) {
@@ -94,7 +89,7 @@ foreach my $course (keys %courses) {
     }
 
     # add row to table
-    $table->load(@row);
+    $table->load(\@row);
 }
 
 print "\n$table\n";
