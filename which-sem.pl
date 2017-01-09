@@ -7,10 +7,12 @@ use warnings;
 use strict;
 
 use Data::Dumper;
+use Text::Table;
 
-my $debug = 1;
+my $debug = 0;
 
 my %courses;
+my @semesters = ("T1", "T2", "U2");
 
 # read course codes into courses hash
 while(my $code = <>) {
@@ -23,9 +25,15 @@ while(my $code = <>) {
     #  and add to hash
     # TODO check that course exists, may not be neccesary
     if((my $legal_code) = $code =~ /^\s*([A-Z]{4}\d{4})\s*$/) {
-        $courses{$legal_code}{"T1"} = 0;
-        $courses{$legal_code}{"T2"} = 0;
-        $courses{$legal_code}{"U1"} = 0;
+        
+        #$courses{$legal_code}{"T1"} = 0;
+        #$courses{$legal_code}{"T2"} = 0;
+        #$courses{$legal_code}{"U1"} = 0;
+
+        foreach my $sem (@semesters) {
+            $courses{$legal_code}{$sem} = 0;
+        }
+
     } else {
         # TODO better error handling
         print "Illegal course code: $code \n";
@@ -65,3 +73,31 @@ if($debug) {
 
 
 # display courses in table
+
+my $table = Text::Table->new("", @semesters);
+
+# Text::Table needs rows as arrays
+
+foreach my $course (keys %courses) {
+    my @row;
+
+    # first column is course code
+    push @row, $course;
+    
+    # add columns for if the course is running in each semester
+    foreach my $sem (@semesters) {
+        if($courses{$course}{$sem} == 1) {
+            push @row, "X";
+        } else {
+            push @row, "";
+        }
+    }
+
+    # add row to table
+    $table->load(@row);
+}
+
+print "\n$table\n";
+
+
+
