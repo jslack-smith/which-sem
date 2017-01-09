@@ -10,9 +10,6 @@ use Data::Dumper;
 
 my $debug = 1;
 
-# TODO get current year from computer
-my $year = 2017;
-
 my %courses;
 
 # read course codes into courses hash
@@ -42,8 +39,28 @@ if($debug) {
 
 # update courses hash with when the courses are running
 foreach my $course (keys %courses) {
-    my $url = "timetable.unsw.edu.au/$year/$course.html";
+    # fetch web page for course
+    my $url = "timetable.unsw.edu.au/current/$course.html";
+    open WEB_PAGE, "wget -q -O- $url|" or die;
 
+    # figure out which semesters the course runs in and update hash
+    while(my $line = <WEB_PAGE>) {
+        # exit loop if no course info
+        last if $line =~ /information for the selected course was not found/i;
+
+        # only need to search lines above this line (SUMMARY OF SEMESTER 1/SEMESTER 2/SUMMER TERM CLASSES)
+        last if $line =~ /summary of/i;
+
+        foreach my $sem (keys $courses{$course}) {
+            if($line =~ /$sem/) {
+                $courses{$course}{$sem} = 1;
+            }
+        }
+    }
+}
+
+if($debug) {
+    print Dumper(\%courses);
 }
 
 
