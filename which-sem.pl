@@ -8,11 +8,29 @@ use strict;
 
 use Data::Dumper;
 use Text::Table;
+use Getopt::Std;
 
-my $debug = 1;
+my $debug = 0;
 
 my %courses;
 my @semesters = ("T1", "T2", "U1");
+
+# handle command line arguments
+my %options=();
+getopts("dh", \%options);
+
+$debug = 1 if defined $options{d};
+
+if(defined $options{h}) {
+    print("\n****** Which Semester? **********************************************\n");
+    print("Pass in a list of UNSW course codes to see which semesters they run in.\n");
+    print("The input should have each course code on a separate line.\n");
+    print("Optional flags:\n");
+    print("\t-d: show debugging info\n");
+    print("\t-h: show help\n");
+    print(  "*********************************************************************\n\n");
+    exit;
+}
 
 # read course codes into courses hash
 while(my $code = <>) {
