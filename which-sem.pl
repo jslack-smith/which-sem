@@ -22,13 +22,15 @@ getopts("dh", \%options);
 $debug = 1 if defined $options{d};
 
 if(defined $options{h}) {
-    print("\n****** Which Semester? **********************************************\n");
-    print("Pass in a list of UNSW course codes to see which semesters they run in.\n");
-    print("The input should have each course code on a separate line.\n");
-    print("Optional flags:\n");
+    print("\n*** Which Semester? ***************************************************\n");
+    print("\n");
+    print(  "Pass in a list of UNSW course codes to see which semesters they run in.\n");
+    print(  "The input should have each course code on a separate line.\n");
+    print(  "Optional flags:\n");
     print("\t-d: show debugging info\n");
     print("\t-h: show help\n");
-    print(  "*********************************************************************\n\n");
+    print("\n");
+    print(  "***********************************************************************\n\n");
     exit;
 }
 
@@ -91,7 +93,8 @@ my $table = Text::Table->new("", @semesters);
 
 # Text::Table needs rows as arrays
 
-foreach my $course (keys %courses) {
+# TODO print in order
+foreach my $course (sort keys %courses) {
     my @row;
 
     # first column is course code
