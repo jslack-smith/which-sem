@@ -26,6 +26,7 @@ if(defined $options{h}) {
     print("\n");
     print(  "Pass in a list of UNSW course codes to see which semesters they run in.\n");
     print(  "The input should have each course code on a separate line.\n");
+    print(  "A course code consists of four letters followed by four numbers\n";
     print(  "Optional flags:\n");
     print("\t-d: show debugging info\n");
     print("\t-h: show help\n");
@@ -46,16 +47,11 @@ while(my $code = <>) {
     # TODO check that course exists, may not be neccesary
     if((my $legal_code) = $code =~ /^\s*([A-Z]{4}\d{4})\s*$/) {
         
-        #$courses{$legal_code}{"T1"} = 0;
-        #$courses{$legal_code}{"T2"} = 0;
-        #$courses{$legal_code}{"U1"} = 0;
-
         foreach my $sem (@semesters) {
             $courses{$legal_code}{$sem} = 0;
         }
 
     } else {
-        # TODO better error handling
         print "Illegal course code: $code \n";
     }
 }
@@ -88,32 +84,33 @@ if($debug) {
 
 
 # display courses in table
+# only print if there are courses in the hash 
 
-my $table = Text::Table->new("", @semesters);
-
-# Text::Table needs rows as arrays
-
-# TODO print in order
-foreach my $course (sort keys %courses) {
-    my @row;
-
-    # first column is course code
-    push @row, $course;
+if(%courses) {
+    my $table = Text::Table->new("", @semesters);
     
-    # add columns for if the course is running in each semester
-    foreach my $sem (@semesters) {
-        if($courses{$course}{$sem} == 1) {
-            push @row, "X";
-        } else {
-            push @row, "";
+    # Text::Table loads rows from array references
+    
+    foreach my $course (sort keys %courses) {
+        my @row;
+    
+        # first column is course code
+        push @row, $course;
+        
+        # add columns for if the course is running in each semester
+        foreach my $sem (@semesters) {
+            if($courses{$course}{$sem} == 1) {
+                push @row, "X";
+            } else {
+                push @row, "";
+            }
         }
+    
+        # add row to table
+        $table->load(\@row);
     }
-
-    # add row to table
-    $table->load(\@row);
+    
+    print "\n$table\n";
+    
 }
-
-print "\n$table\n";
-
-
 
