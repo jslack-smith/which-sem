@@ -22,10 +22,13 @@ while(my $code = <>) {
     chomp $code;
     $code = uc $code;
 
-    # check code is legal, legal code is four letters followed by four numbers
+    # check code is legal (legal code is four letters followed by four numbers)
+    #  and add to hash
     # TODO check that course exists, may not be neccesary
     if((my $legal_code) = $code =~ /^\s*([A-Z]{4}\d{4})\s*$/) {
-        $courses{$legal_code} = "";
+        $courses{$legal_code}{"T1"} = 0;
+        $courses{$legal_code}{"T2"} = 0;
+        $courses{$legal_code}{"U1"} = 0;
     } else {
         # TODO better error handling
         print "Illegal course code: $code \n";
@@ -37,10 +40,11 @@ if($debug) {
 }
 
 
-
-
 # update courses hash with when the courses are running
+foreach my $course (keys %courses) {
+    my $url = "timetable.unsw.edu.au/$year/$course.html";
 
+}
 
 
 # display courses in table
